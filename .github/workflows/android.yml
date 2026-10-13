@@ -10,14 +10,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with: { distribution: temurin, java-version: "17" }
       - name: Compilar AAB y APK
         working-directory: android/twa
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
-          ./gradlew --no-daemon bundleRelease assembleRelease
+          set -o pipefail
+          ./gradlew --no-daemon --stacktrace bundleRelease assembleRelease 2>&1 | tee ../../build.log
+      - name: Guardar el registro de compilación
+        if: always()
+        uses: actions/upload-artifact@v4
+        with: { name: registro-compilacion, path: build.log, retention-days: 7 }
       - name: Reunir resultados y herramientas de firma
         run: |
           mkdir out
