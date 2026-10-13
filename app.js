@@ -116,7 +116,7 @@
             Cloud.mode = "claude"; Cloud.uid = me.id; Cloud.name = me.name || ""; Cloud.photo = me.avatarUrl || "";
             Cloud.write = d => ref.set(d);
             const snap = await ref.get(); pulled(snap.exists ? snap.data() : null);
-            if (PF) syncOthers(c => db.doc("data/users/" + me.id + "/" + c.cloud).get().then(x => x.exists ? x.data() : null));
+            if (PF) syncOthers(c => db.doc("data/users/" + me.id + "/" + c.cloud).get().then(x => x.exists ? x.data() : null), (c, d) => db.doc("data/users/" + me.id + "/" + c.cloud).set(d));
           }
         }
       }
@@ -124,17 +124,30 @@
     Cloud.ready = true; refresh();
   }
   // Trae el progreso de los otros idiomas (solo lectura) para que la racha y los XP comunes estén al día en este dispositivo.
-  function syncOthers(get) { Promise.all(PF.others().map(c => get(c).then(d => PF.absorb(c.id, d), () => false))).then(r => { if (r.some(Boolean)) refresh(); }); }
+  // Se mezcla con lo que haya en este dispositivo (por ejemplo, progreso de invitado) y, si cambia, se sube a la cuenta.
+  function syncOthers(get, put) {
+    Promise.all(PF.others().map(c => get(c).then(remote => {
+      const key = "sl." + c.store + "state", local = LS.get(key);
+      if (!local && !remote) return false;
+      const merged = E.merge(local || E.blank(), remote), changed = JSON.stringify(merged) !== JSON.stringify(local);
+      if (changed) LS.set(key, merged);
+      if (put && JSON.stringify(merged) !== JSON.stringify(remote ? E.merge(E.blank(), remote) : null)) put(c, merged).catch(() => { });
+      return changed;
+    }, () => false))).then(r => { if (r.some(Boolean)) refresh(); });
+  }
+  // Borra del dispositivo el progreso de todos los idiomas (al cerrar sesión o borrar la cuenta).
+  function clearLocal() { S = E.blank(); LS.set(KS, S); if (PF) PF.courses.forEach(c => { try { localStorage.removeItem("sl." + c.store + "state"); } catch (e) { } }); LS.set(KS, S); }
   function initFirebase() {
     firebase.initializeApp(window.SAIMAP_FIREBASE);
     const auth = firebase.auth(), fs = firebase.firestore();
-    Cloud.mode = "firebase"; Cloud.auth = auth;
+    Cloud.mode = "firebase"; Cloud.auth = auth; Cloud.fs = fs; auth.languageCode = "es";
     auth.onAuthStateChanged(async u => {
       if (u) {
         Cloud.uid = u.uid; Cloud.name = u.displayName || ""; Cloud.email = u.email || ""; Cloud.photo = u.photoURL || "";
         const base = fs.collection("users").doc(u.uid), ref = C.id ? base.collection("courses").doc(C.id) : base; Cloud.write = d => ref.set(d);
         try { const s = await ref.get(); pulled(s.exists ? s.data() : null); Cloud.err = ""; } catch (e) { Cloud.err = "No se ha podido cargar el progreso de la cuenta."; }
-        if (PF) syncOthers(c => (c.id === "it" ? base : base.collection("courses").doc(c.id)).get().then(x => x.exists ? x.data() : null));
+        const docOf = c => c.id === "it" ? base : base.collection("courses").doc(c.id);
+        if (PF) syncOthers(c => docOf(c).get().then(x => x.exists ? x.data() : null), (c, d) => docOf(c).set(d));
       } else { Cloud.uid = null; Cloud.write = null; Cloud.name = Cloud.email = Cloud.photo = ""; }
       Cloud.ready = true; refresh();
     });
@@ -142,7 +155,41 @@
   const authMsg = e => ({ "auth/invalid-credential": "Correo o contraseña incorrectos.", "auth/wrong-password": "Correo o contraseña incorrectos.", "auth/user-not-found": "No hay ninguna cuenta con ese correo.", "auth/email-already-in-use": "Ya existe una cuenta con ese correo. Pulsa «Entrar».", "auth/weak-password": "La contraseña debe tener al menos 6 caracteres.", "auth/invalid-email": "Escribe un correo válido.", "auth/popup-closed-by-user": "Has cerrado la ventana de Google antes de terminar." }[e && e.code] || "No se ha podido iniciar sesión. Inténtalo de nuevo.");
   function google() { const p = new firebase.auth.GoogleAuthProvider(); Cloud.auth.signInWithPopup(p).catch(e => { if (e && (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment")) return Cloud.auth.signInWithRedirect(p); formErr = authMsg(e); refresh(); }); }
   function emailAuth(create) { const m = $("#email").value.trim(), p = $("#pass").value; formErr = ""; Cloud.auth[create ? "createUserWithEmailAndPassword" : "signInWithEmailAndPassword"](m, p).catch(e => { formErr = authMsg(e); refresh(); }); }
-  function signOut() { clearTimeout(pushTimer); const w = Cloud.write, snap = JSON.parse(JSON.stringify(S)); Promise.resolve(w && w(snap)).catch(() => { }).then(() => Cloud.auth.signOut()).then(() => { S = E.blank(); LS.set(KS, S); refresh(); }); }
+  function signOut() { clearTimeout(pushTimer); const w = Cloud.write, snap = JSON.parse(JSON.stringify(S)); Promise.resolve(w && w(snap)).catch(() => { }).then(() => Cloud.auth.signOut()).then(() => { clearLocal(); refresh(); }); }
+  function resetPass() {
+    const m = ($("#email") || {}).value; formErr = "";
+    if (!m || !/.+@.+\..+/.test(m.trim())) { formErr = "Escribe tu correo arriba y vuelve a pulsar «¿Olvidaste la contraseña?»."; return refresh(); }
+    Cloud.auth.sendPasswordResetEmail(m.trim()).then(() => { formErr = "Te hemos enviado un correo a " + m.trim() + " para crear una contraseña nueva. Mira también en spam."; refresh(); }, e => { formErr = authMsg(e); refresh(); });
+  }
+  // Borra la cuenta: primero el progreso de todos los idiomas en Firestore y después el usuario.
+  async function deleteAccount() {
+    const u = Cloud.auth && Cloud.auth.currentUser; if (!u) return hide();
+    const msg = t => { const el = $("#delmsg"); if (el) el.textContent = t; }, btn = $("#delgo"); if (btn) btn.disabled = true;
+    msg("Borrando…");
+    try {
+      const pass = ($("#delpass") || {}).value;
+      const isPass = u.providerData.some(p => p.providerId === "password"), isGoogle = u.providerData.some(p => p.providerId === "google.com");
+      // Firebase pide un inicio de sesión reciente para borrar la cuenta: se confirma antes de tocar nada.
+      if (isPass && !isGoogle) await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email, pass || ""));
+      else if (isGoogle) await u.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());
+      clearTimeout(pushTimer); Cloud.write = null;
+      const base = Cloud.fs.collection("users").doc(u.uid), ids = PF ? PF.courses.map(c => c.id) : [C.id || "it"];
+      await Promise.all(ids.filter(id => id !== "it").map(id => base.collection("courses").doc(id).delete()));
+      await base.delete();
+      await u.delete();
+      clearLocal(); hide(); formErr = "Tu cuenta y tu progreso se han borrado."; view = "me"; render();
+    } catch (e) {
+      if (btn) btn.disabled = false;
+      msg(e && (e.code === "auth/wrong-password" || e.code === "auth/invalid-credential") ? "La contraseña no es correcta." : e && e.code === "auth/popup-closed-by-user" ? "Has cerrado la ventana de Google sin confirmar." : e && e.code === "auth/requires-recent-login" ? "Por seguridad, cierra sesión, vuelve a entrar y repite el borrado." : "No se ha podido borrar la cuenta. Comprueba la conexión e inténtalo de nuevo.");
+    }
+  }
+  function askDelete() {
+    const u = Cloud.auth && Cloud.auth.currentUser; if (!u) return;
+    const needPass = u.providerData.some(p => p.providerId === "password") && !u.providerData.some(p => p.providerId === "google.com");
+    show('<h2>¿Borrar tu cuenta?</h2><p class="sub">Se borran tu cuenta y el progreso de todos los idiomas, en la nube y en este dispositivo. No se puede deshacer.</p>' +
+      (needPass ? '<input id="delpass" class="field" type="password" autocomplete="current-password" placeholder="Tu contraseña, para confirmar">' : '<p class="sub">Te pediremos confirmar con tu cuenta de Google.</p>') +
+      '<p class="err" id="delmsg" aria-live="polite"></p><button class="btn warn" id="delgo" data-act="delacct">Borrar mi cuenta</button><button class="btn plain" data-act="hide">Cancelar</button>');
+  }
 
   // ---------- voz ----------
   // Solo se habla con una voz real del idioma del curso. Si el dispositivo no tiene ninguna, se avisa en vez de leer con otra voz.
@@ -328,11 +375,11 @@
     if (Cloud.mode === "firebase" && !Cloud.uid) {
       acct = '<h3>Inicia sesión</h3><p class="sub">Tu progreso se guarda en tu cuenta y te sigue en cualquier dispositivo.</p><button class="btn" data-act="google">Entrar con Google</button>' +
         '<form class="form" id="mailform"><input id="email" type="email" autocomplete="email" placeholder="Correo electrónico" required><input id="pass" type="password" autocomplete="current-password" placeholder="Contraseña" required minlength="6">' +
-        '<button class="btn plain" type="submit">Entrar con correo</button><button class="btn plain" type="button" data-act="signup">Crear cuenta</button></form>' + (formErr ? '<p class="err">' + esc(formErr) + "</p>" : "");
+        '<button class="btn plain" type="submit">Entrar con correo</button><button class="btn plain" type="button" data-act="signup">Crear cuenta</button><button class="linkbtn" type="button" data-act="resetpass">¿Olvidaste la contraseña?</button></form>' + (formErr ? '<p class="err">' + esc(formErr) + "</p>" : "");
     } else {
       const status = Cloud.mode === "claude" ? "Progreso guardado en tu cuenta de Claude" : Cloud.mode === "firebase" ? "Sesión iniciada · progreso sincronizado" : Cloud.ready ? "El progreso se guarda solo en este navegador" : "Conectando con tu cuenta…";
       acct = '<div class="who"><span class="avatar">' + (Cloud.photo ? '<img alt="" src="' + esc(Cloud.photo) + '">' : I.user) + '</span><div><b id="whoname"></b><span class="sub">' + status + "</span></div></div>" +
-        (Cloud.mode === "firebase" ? '<button class="btn plain" data-act="signout">Cerrar sesión</button>' : "");
+        (Cloud.mode === "firebase" ? '<button class="btn plain" data-act="signout">Cerrar sesión</button><button class="linkbtn danger" data-act="askdelete">Borrar mi cuenta</button>' : "");
     }
     loadVoices();
     const voiceInfo = CLIPS ? "<p>Audio grabado con voz " + T.langAdj + ". Funciona igual en todos los dispositivos, también sin conexión.</p>" : !synth ? '<p class="err">Este navegador no puede leer en voz alta.</p>' :
@@ -531,6 +578,9 @@
       case "google": return google();
       case "signup": return emailAuth(true);
       case "signout": return signOut();
+      case "resetpass": return resetPass();
+      case "askdelete": return askDelete();
+      case "delacct": return deleteAccount();
     }
   });
   document.addEventListener("change", ev => { if (ev.target.id === "voice") { P.voice = ev.target.value; LS.set(KP, P); loadVoices(); say("Ciao! Questa è la mia voce."); render(); } });
