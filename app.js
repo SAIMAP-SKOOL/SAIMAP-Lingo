@@ -345,7 +345,8 @@
       sw("audio", "Audio en " + T.lang, "Lee palabras y frases, y activa los ejercicios de escucha") + sw("slow", "Voz lenta", "Para oír cada sílaba con calma") + sw("sfx", "Efectos de sonido", "Aciertos, fallos y final de lección") + "</div>" +
       '<div class="card"><h3>Hablar</h3>' + (srSupported() ? sw("speak", "Ejercicios de hablar", "Lees frases en voz alta y la app comprueba tu pronunciación con el micrófono") : '<p class="sub">' + (SR ? "Aquí no se puede usar el micrófono. Abre la app desde su web o instálala para practicar hablando." : "Este navegador no reconoce la voz. Para practicar hablando, usa Chrome, Edge o Safari.") + "</p>") + "</div>" +
       '<div class="card">' + sw("free", "Modo libre", "Abre todos los módulos sin seguir el orden") + "</div>" +
-      '<div class="card"><div class="row"><span>Has practicado ' + seen + " de " + E.ITEMS.length + ' elementos del curso<small>Palabras, frases y huecos de gramática</small></span></div><button class="btn plain" data-act="askreset">Borrar mi progreso</button></div></div>';
+      '<div class="card"><div class="row"><span>Has practicado ' + seen + " de " + E.ITEMS.length + ' elementos del curso<small>Palabras, frases y huecos de gramática</small></span></div><button class="btn plain" data-act="askreset">Borrar mi progreso</button></div>' +
+      '<p class="sub legal"><a href="https://saimap-skool.github.io/SAIMAP-Lingo/privacidad.html" target="_blank" rel="noopener">Política de privacidad</a> · soloaimaproject@gmail.com</p></div>';
     const w = $("#whoname"); if (w) w.textContent = Cloud.name || Cloud.email || (Cloud.mode === "local" ? "Invitado" : "Tu cuenta");
     const vn = $("#voicename"); if (vn) vn.textContent = itVoice.name;
     const sel = $("#voice"); if (sel) voices.forEach(v => { const o = document.createElement("option"); o.value = v.voiceURI; o.textContent = v.name + " (" + v.lang + ")"; o.selected = v === itVoice; sel.appendChild(o); });

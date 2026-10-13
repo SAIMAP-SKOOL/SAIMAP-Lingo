@@ -12,7 +12,8 @@ La racha y los XP son comunes a todos los idiomas; cada curso guarda sus unidade
 ## Publicar en GitHub Pages
 1. Sube el contenido de esta carpeta a un repositorio (incluido `.nojekyll`).
 2. Settings › Pages › Deploy from a branch › `main` / raíz.
-3. Si las apps de cada idioma están en el mismo usuario de GitHub (misma dirección `usuario.github.io`), el progreso guardado en el navegador se comparte: la plataforma lo encuentra solo.
+3. Política de privacidad: `privacidad.html` (enlazada desde Ajustes y necesaria para Google Play).
+4. Si las apps de cada idioma están en el mismo usuario de GitHub (misma dirección `usuario.github.io`), el progreso guardado en el navegador se comparte: la plataforma lo encuentra solo.
 
 ## Cuenta y sincronización (opcional)
 Rellena `firebase-config.js` con la configuración de tu proyecto de Firebase y publica `firestore.rules`.

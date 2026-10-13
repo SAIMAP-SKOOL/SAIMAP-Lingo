@@ -1,5 +1,5 @@
 // Caché para que la app abra sin conexión. Las imágenes y el audio se guardan al usarlos. Sube el número de versión en cada publicación.
-const VERSION = "saimap-lingo-plataforma-v1";
+const VERSION = "saimap-lingo-plataforma-v2";
 const SHELL = ["./", "index.html", "engine.js", "app.js", "platform.js", "courses.js", "firebase-config.js", "manifest.webmanifest", "icons/icon-192.png", "courses/it/course.js", "courses/en/course.js", "courses/pt/course.js", "courses/fr/course.js", "courses/de/course.js"];
 self.addEventListener("install", e => e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim())));
