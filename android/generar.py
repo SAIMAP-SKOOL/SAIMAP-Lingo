@@ -31,7 +31,7 @@ SIMPLE = {
     "<%= generateShortcuts() %>": '[]', "<%= splashScreenFadeOutDuration %>": '300',
     "<%= generatorApp %>": 'saimap-lingo', "<%= fallbackType %>": 'customtabs',
     "<%= enableSiteSettingsShortcut %>": 'true', "<%= orientation %>": 'portrait',
-    "<%= minSdkVersion %>": '21', "<%= appVersionCode %>": str(VERSION_CODE), "<%= appVersionName %>": VERSION_NAME,
+    "<%= minSdkVersion %>": '24', "<%= appVersionCode %>": str(VERSION_CODE), "<%= appVersionName %>": VERSION_NAME,
     "<%= toAndroidScreenOrientation(orientation) %>": 'ActivityInfo.SCREEN_ORIENTATION_PORTRAIT',
     "<%= webManifestUrl %>": f'https://{HOST}{PATH}manifest.webmanifest',
     "<%= fullScopeUrl %>": f'https://{HOST}{PATH}',
