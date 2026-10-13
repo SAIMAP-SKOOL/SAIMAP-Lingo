@@ -1,4 +1,4 @@
-# Compila la app Android (TWA) de SAIMAP Lingo sin firmar.
+# Compila la app Android (TWA) de SAIMAP Lingo sin firmar y deja el resultado en la rama "android-build".
 # La firma se hace fuera de GitHub con la clave de subida, que no está en el repositorio.
 name: App Android
 on:
@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths: ["android/**", ".github/workflows/android.yml"]
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,23 +18,21 @@ jobs:
       - name: Compilar AAB y APK
         working-directory: android/twa
         run: |
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
           set -o pipefail
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
           ./gradlew --no-daemon --stacktrace bundleRelease assembleRelease 2>&1 | tee ../../build.log
-      - name: Guardar el registro de compilación
+      - name: Publicar en la rama android-build
         if: always()
-        uses: actions/upload-artifact@v4
-        with: { name: registro-compilacion, path: build.log, retention-days: 7 }
-      - name: Reunir resultados y herramientas de firma
         run: |
           mkdir out
-          cp android/twa/app/build/outputs/bundle/release/app-release.aab out/
-          cp android/twa/app/build/outputs/apk/release/app-release-unsigned.apk out/
+          cp build.log out/ || true
+          cp android/twa/app/build/outputs/bundle/release/app-release.aab out/ || true
+          cp android/twa/app/build/outputs/apk/release/app-release-unsigned.apk out/ || true
           BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
-          cp "$BT/lib/apksigner.jar" "$BT/zipalign" out/
-          ls -la out
-      - uses: actions/upload-artifact@v4
-        with:
-          name: saimap-lingo-android-sin-firmar
-          path: out/
-          retention-days: 30
+          cp "$BT/lib/apksigner.jar" "$BT/zipalign" out/ || true
+          echo "${GITHUB_SHA} ${{ job.status }}" > out/estado.txt
+          cd out
+          git init -q -b android-build
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add -A && git commit -q -m "Compilación ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" android-build
