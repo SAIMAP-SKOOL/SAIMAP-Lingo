@@ -1,0 +1,6 @@
+twa/.gradle/
+twa/app/build/
+twa/build/
+twa/local.properties
+*.jks
+*.keystore
