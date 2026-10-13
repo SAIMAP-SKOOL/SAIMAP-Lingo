@@ -291,7 +291,7 @@
   const gStreak = () => PF ? PF.stats().streak : E.liveStreak(S), gXp = () => PF ? PF.stats().xp : S.xp, gToday = () => PF ? PF.stats().today : E.todayXp(S);
   function topbar() {
     const st = gStreak();
-    return '<header class="top"><div class="brand">' + moka("happy") + '<span>SAIMAP <i>Lingo</i></span>' + (PF ? '' : '<b class="cbadge">' + T.badge + '</b>') + '</div>' + (PF ? '<button class="langbtn" data-act="lang" aria-label="Cambiar de idioma" title="Cambiar de idioma">' + PF.flag(PF.current) + '<span>' + T.badge + '</span></button>' : '') +
+    return '<header class="top' + (PF ? " pf" : "") + '"><div class="brand">' + moka("happy") + '<span>SAIMAP <i>Lingo</i></span>' + (PF ? '' : '<b class="cbadge">' + T.badge + '</b>') + '</div>' + (PF ? '<button class="langbtn" data-act="lang" aria-label="Cambiar de idioma" title="Cambiar de idioma">' + PF.flag(PF.current) + '<span>' + T.badge + '</span></button>' : '') +
       '<span class="stat fire' + (st ? " lit" : "") + '" title="Racha de días">' + I.fire + st + '</span><span class="stat xp" title="Puntos de experiencia">' + I.bolt + gXp() + "</span>" +
       '<button class="avatar" data-act="me" aria-label="Cuenta y ajustes">' + (Cloud.photo ? '<img alt="" src="' + esc(Cloud.photo) + '">' : I.user) + "</button></header>";
   }
