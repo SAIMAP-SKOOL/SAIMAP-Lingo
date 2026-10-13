@@ -1,5 +1,5 @@
 """Genera el proyecto Android (Trusted Web Activity) de SAIMAP Lingo a partir de la plantilla de Bubblewrap.
-La app abre https://saimap-skool.github.io/saimap-lingo/ a pantalla completa, sin barra del navegador.
+La app abre https://saimap-skool.github.io/SAIMAP-Lingo/ a pantalla completa, sin barra del navegador.
 Uso: python3 android/generar.py <ruta a bubblewrap/packages/core/template_project>
 Para publicar una versión nueva en Play: sube VERSION_CODE (y VERSION_NAME) y vuelve a generar."""
 import os, re, sys, shutil
@@ -7,7 +7,7 @@ from PIL import Image
 
 PACKAGE = 'com.saimap.lingo'
 HOST = 'saimap-skool.github.io'
-PATH = '/saimap-lingo/'
+PATH = '/SAIMAP-Lingo/'
 NAME = 'SAIMAP Lingo'
 LAUNCHER = 'SAIMAP Lingo'
 VERSION_CODE = 1

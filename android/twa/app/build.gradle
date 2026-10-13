@@ -23,7 +23,7 @@ plugins {
 def twaManifest = [
     applicationId: 'com.saimap.lingo',
     hostName: 'saimap-skool.github.io', // The domain being opened in the TWA.
-    launchUrl: '/saimap-lingo/', // The start path for the TWA. Must be relative to the domain.
+    launchUrl: '/SAIMAP-Lingo/', // The start path for the TWA. Must be relative to the domain.
     name: 'SAIMAP Lingo', // The application name.
     launcherName: 'SAIMAP Lingo', // The name shown on the Android Launcher.
     themeColor: '#1F5FD1', // The color used for the status bar.
@@ -76,12 +76,12 @@ android {
             // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
             // is used by Chrome OS and Meta Quest to open the Web version of the PWA instead of
             // the TWA, as it will probably give a better user experience for non-mobile devices.
-            resValue "string", "webManifestUrl", 'https://saimap-skool.github.io/saimap-lingo/manifest.webmanifest'
+            resValue "string", "webManifestUrl", 'https://saimap-skool.github.io/SAIMAP-Lingo/manifest.webmanifest'
         
 
         
             // This is used by Meta Quest.
-            resValue "string", "fullScopeUrl", 'https://saimap-skool.github.io/saimap-lingo/'
+            resValue "string", "fullScopeUrl", 'https://saimap-skool.github.io/SAIMAP-Lingo/'
         
 
         
