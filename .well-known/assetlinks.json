@@ -1,0 +1,5 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": { "namespace": "android_app", "package_name": "com.saimap.lingo.plataforma",
+              "sha256_cert_fingerprints": ["PEGA_AQUI_LA_HUELLA_SHA256_DE_TU_CLAVE_DE_FIRMA"] }
+}]
