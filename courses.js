@@ -219,5 +219,49 @@ window.LINGO_COURSES = [
   "files": [
    "course.js"
   ]
+ },
+ {
+  "id": "el",
+  "name": "Griego",
+  "variety": "Griego moderno",
+  "store": "el.",
+  "cloud": "progress-el",
+  "book": "Τα ελληνικά από το Α ως το Ω",
+  "units": 50,
+  "levels": [
+   {
+    "id": "A1",
+    "from": 1,
+    "to": 8
+   },
+   {
+    "id": "A2",
+    "from": 9,
+    "to": 17
+   },
+   {
+    "id": "B1",
+    "from": 18,
+    "to": 28
+   },
+   {
+    "id": "B2",
+    "from": 29,
+    "to": 38
+   },
+   {
+    "id": "C1",
+    "from": 39,
+    "to": 45
+   },
+   {
+    "id": "C2",
+    "from": 46,
+    "to": 50
+   }
+  ],
+  "files": [
+   "course.js"
+  ]
  }
 ];

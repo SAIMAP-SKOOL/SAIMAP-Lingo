@@ -5,6 +5,7 @@
   const T = Object.assign({ store: "", cloud: "progress", badge: "IT", unit: "Unità", review: "Ripasso", reviewDone: "Ripasso fatto!", unitDone: "Unità {n} completata!", lessonDone: "Lezione completata!", bravo: "Complimenti!",
     lang: "italiano", langAdj: "italiana", sysLang: "Italiano", voiceRe: "^it([-_]|$)", voicePref: "^it[-_]it", voiceLang: "it-IT", voiceNames: "alice|federica|elsa|isabella|luca|diego|paola|emma|cosimo",
     keys: "àèéìòù", book: "Italiano dalla A alla Z", hello: "Ciao! Benvenuto in SAIMAP Lingo. Oggi impariamo l'italiano insieme.", greet: ["Buongiorno!", "Buon pomeriggio!", "Buonasera!"] }, C.ui || {});
+  if (T.kb === "el") T.unit = '<span lang="el">' + T.unit + "</span>";   // mayúsculas griegas sin tilde (text-transform respeta lang)
   const KS = "sl." + T.store + "state", KP = "sl." + T.store + "pref", $ = s => document.querySelector(s), app = $("#app"), veil = $("#veil");
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const svg = (d, stroke) => '<svg viewBox="0 0 24 24" aria-hidden="true" ' + (stroke ? 'fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"' : 'fill="currentColor"') + '><path d="' + d + '"/></svg>';
@@ -288,6 +289,22 @@
   }
   const hasAudio = () => !!(CLIPS || synth);
   const canListen = () => !!(P.audio && (CLIPS || (synth && itVoice)));
+  // Teclado griego en pantalla (T.kb === "el") y conversión del teclado latino físico (distribución griega estándar).
+  const GR_MAP = { a: "α", b: "β", g: "γ", d: "δ", e: "ε", z: "ζ", h: "η", u: "θ", i: "ι", k: "κ", l: "λ", m: "μ", n: "ν", j: "ξ", o: "ο", p: "π", r: "ρ", s: "σ", t: "τ", y: "υ", f: "φ", x: "χ", c: "ψ", v: "ω", w: "ς", q: ";", "á": "ά", "é": "έ", "í": "ί", "ó": "ό", "ú": "ύ", "ü": "ϋ", "ï": "ϊ" };
+  const TONOS = { α: "ά", ε: "έ", η: "ή", ι: "ί", ο: "ό", υ: "ύ", ω: "ώ", ϊ: "ΐ", ϋ: "ΰ" }, UNTONOS = Object.fromEntries(Object.entries(TONOS).map(([a, b]) => [b, a]));
+  const DIAL = { ι: "ϊ", υ: "ϋ", ί: "ΐ", ύ: "ΰ" }, UNDIAL = Object.fromEntries(Object.entries(DIAL).map(([a, b]) => [b, a]));
+  const toGreek = s => s.replace(/[a-záéíóúüï]/gi, c => { const g = GR_MAP[c.toLowerCase()]; return g ? (c === c.toLowerCase() || g === ";" ? g : g.toUpperCase()) : c; })
+    .replace(/[´΄]([αεηιουωϊϋ])/g, (m, v) => TONOS[v]).replace(/σ(?=[\s.,;!?])/g, "ς");
+  const grKeys = () => '<div class="keys gr">' + ["ςερτυθιοπ", "ασδφγηξκλ", "ζχψωβνμ"].map((r, i) => '<div class="kr">' + r.split("").map(c => '<button data-key="' + c + '" aria-label="' + c + '">' + c + "</button>").join("") +
+    (i === 2 ? '<button class="wide" data-gk="bs" aria-label="Borrar">⌫</button>' : "") + "</div>").join("") +
+    '<div class="kr"><button class="wide" data-gk="tonos" aria-label="Tilde (tonos)">΄ tilde</button><button class="space" data-gk="sp" aria-label="Espacio">espacio</button><button class="wide" data-gk="dial" aria-label="Diéresis">¨</button></div></div>';
+  function grKey(f, k) {
+    const v = f.value, last = v.slice(-1), head = v.slice(0, -1);
+    if (k === "bs") f.value = head;
+    else if (k === "sp") f.value = v.replace(/σ$/, "ς") + " ";
+    else if (k === "tonos") f.value = TONOS[last] ? head + TONOS[last] : UNTONOS[last] ? head + UNTONOS[last] : v;
+    else if (k === "dial") f.value = DIAL[last] ? head + DIAL[last] : UNDIAL[last] ? head + UNDIAL[last] : v;
+  }
   const sayBtn = (t, key, big) => hasAudio() ? '<button class="' + (big ? "bigsay" : "say") + '" data-say="' + esc(t) + '" data-k="' + (key || "") + '" aria-label="Escuchar">' + I.vol + "</button>" : "<span></span>";
 
   // ---------- efectos de sonido ----------
@@ -431,7 +448,7 @@
     else if (ex.type === "mcS") { ask = "¿Qué significa esta frase?"; body = '<div class="cue">' + sayBtn(it.it, it.k) + '<div class="t">' + esc(it.it) + "</div></div>" + opts(ex.options); auto = 1; }
     else if (ex.type === "gap") { ask = "Completa"; body = '<div class="cue"><div class="t">' + esc(it.q).replace("___", '<span class="blank" id="blank">&nbsp;</span>') + "<small>" + esc(it.es) + "</small></div></div>" + opts(ex.options); }
     else if (ex.type === "speak") { ask = "Lee en voz alta"; body = '<div class="cue">' + sayBtn(it.it, it.k) + '<div class="t">' + esc(it.it) + "<small>" + esc(it.es) + '</small></div></div><div class="speak"><button class="mic" id="mic" data-act="mic" aria-label="Pulsa y habla">' + I.mic + '</button><p class="heard" id="heard" aria-live="polite">Toca el micrófono y lee la frase</p></div>'; auto = 1; }
-    else if (ex.type === "type") { ask = "Escribe en " + T.lang; body = '<div class="cue">' + emo(it.pic) + '<div class="t">' + esc(it.es) + '</div></div><input class="field" id="answer" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Escribe aquí"><div class="keys">' + T.keys.split("").map(c => '<button data-key="' + c + '" aria-label="Insertar ' + c + '">' + c + "</button>").join("") + "</div>"; }
+    else if (ex.type === "type") { ask = "Escribe en " + T.lang; body = '<div class="cue">' + emo(it.pic) + '<div class="t">' + esc(it.es) + '</div></div><input class="field" id="answer" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Escribe aquí">' + (T.kb === "el" ? grKeys() : '<div class="keys">' + T.keys.split("").map(c => '<button data-key="' + c + '" aria-label="Insertar ' + c + '">' + c + "</button>").join("") + "</div>"); }
     else if (ex.type === "order" || ex.type === "listenOrder") {
       const heard = ex.type === "listenOrder"; ask = heard ? "Escucha y ordena lo que oyes" : "Traduce al " + T.lang;
       body = '<div class="cue">' + (heard ? sayBtn(it.it, it.k, 1) + '<div class="t"><small>Pulsa para volver a escuchar</small></div>' : '<div class="t">' + esc(it.es) + "</div>") + '</div><div class="line" id="line" aria-label="Tu respuesta"></div><div class="bank" id="bank">' + ex.bank.map((t, i) => '<button class="tile" data-tile="' + i + '">' + esc(t) + "</button>").join("") + "</div>"; if (heard) auto = 1;
@@ -440,7 +457,7 @@
       body = '<div class="opts two">' + a.map((x, i) => '<button class="opt" data-ml="' + x.k + '">' + esc(x.it) + '</button><button class="opt" data-mr="' + b[i].k + '">' + esc(b[i].es) + "</button>").join("") + "</div>";
     }
     app.innerHTML = '<div class="lesson">' + bar() + '<div class="lbody">' + (ex.review ? '<span class="chip">Repaso · ' + T.unit + ' ' + (it ? it.u : "") + "</span>" : "") + '<h2 class="ask">' + ask + "</h2>" + body + '</div><div class="lfoot" id="foot">' + (ex.type === "match" ? "" : ex.type === "speak" ? '<div class="skips"><button class="btn plain" data-act="skipspeak">Saltar</button><button class="btn plain" data-act="nomic">Ahora no puedo hablar</button></div>' : '<button class="btn" id="go" data-act="check" disabled>Comprobar</button>') + "</div></div>";
-    const f = $("#answer"); if (f) { f.focus(); f.addEventListener("input", () => { $("#go").disabled = !f.value.trim(); }); }
+    const f = $("#answer"); if (f) { f.focus(); f.addEventListener("input", () => { if (T.kb === "el") { const g = toGreek(f.value); if (g !== f.value) f.value = g; } $("#go").disabled = !f.value.trim(); }); }
     if (auto) say(it.it, it.k);
   }
   const YES = ["Bravissimo!", "Ottimo!", "Perfetto!", "Esatto!", "Grande!", "Benissimo!"], NO = ["Quasi!", "Peccato!", "Ci siamo quasi!"];
@@ -465,7 +482,7 @@
       app.querySelectorAll("[data-opt]").forEach((b, i) => { b.classList.remove("sel"); if (ex.options[i] === ex.answer) b.classList.add("right"); else if (i === cur.sel) b.classList.add("wrong"); b.disabled = true; });
       settle(ok);
     } else if (ex.type === "type") {
-      const f = $("#answer"), r = E.checkType(ex, f.value); f.disabled = true; settle(r !== "no", r === "accent" ? "Bene, pero revisa los acentos" : "");
+      const f = $("#answer"), r = E.checkType(ex, f.value); f.disabled = true; settle(r !== "no", r === "accent" ? (T.almost || "Bene") + ", pero revisa los acentos" : "");
     } else { app.querySelectorAll(".tile").forEach(b => b.disabled = true); settle(E.checkOrder(ex, cur.chosen.map(i => ex.bank[i]))); }
   }
   function next() { stopRec(); L.q.shift(); if (L.q.length) { render(); window.scrollTo(0, 0); } else finishLesson(); }
@@ -539,7 +556,8 @@
     if (d.start) { const p = d.start.split("."); return start(+p[0], +p[1]); }
     if (d.pref === "speak" && P.speak && Date.now() < (P.micOff || 0)) { P.micOff = 0; LS.set(KP, P); return render(); }   // estaba en pausa: se reanuda
     if (d.pref) { P[d.pref] = !P[d.pref]; LS.set(KP, P); if (d.pref === "sfx" && P.sfx) sfx("ok"); return render(); }
-    if (d.key) { const f = $("#answer"); if (f && !f.disabled) { f.value += d.key; f.focus(); $("#go").disabled = false; } return; }
+    if (d.key) { const f = $("#answer"); if (f && !f.disabled) { f.value += d.key; if (T.kb !== "el") f.focus(); $("#go").disabled = false; } return; }
+    if (d.gk) { const f = $("#answer"); if (f && !f.disabled) { grKey(f, d.gk); $("#go").disabled = !f.value.trim(); } return; }
     if (d.opt != null && cur && !cur.checked) { cur.sel = +d.opt; app.querySelectorAll("[data-opt]").forEach((b, i) => b.classList.toggle("sel", i === cur.sel)); const bl = $("#blank"); if (bl) bl.textContent = cur.ex.options[cur.sel]; $("#go").disabled = false; return; }
     if (d.tile != null && cur && !cur.checked) {
       const i = +d.tile, at = cur.chosen.indexOf(i); if (at >= 0) cur.chosen.splice(at, 1); else cur.chosen.push(i);

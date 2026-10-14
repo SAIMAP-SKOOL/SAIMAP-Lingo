@@ -1,7 +1,7 @@
 {
  "name": "SAIMAP Lingo",
  "short_name": "SAIMAP Lingo",
- "description": "SAIMAP Lingo: aprende italiano, inglés, portugués, francés y alemán desde cero con lecciones cortas y repaso continuo.",
+ "description": "SAIMAP Lingo: aprende italiano, inglés, portugués, francés, alemán y griego desde cero con lecciones cortas y repaso continuo.",
  "lang": "es",
  "start_url": "./",
  "scope": "./",
@@ -32,6 +32,10 @@
   {
    "name": "Alemán",
    "url": "./#de"
+  },
+  {
+   "name": "Griego",
+   "url": "./#el"
   }
  ],
  "icons": [
