@@ -1,0 +1,14 @@
+{
+  "lang": "pt",
+  "theme": "pt",
+  "title": "Português de A a Z",
+  "cover_title": "Português<br>de A a Z",
+  "subtitle": "Curso completo de língua portuguesa · A1–C2",
+  "blurb": "50 unidades com diálogos, palavras, gramática, exercícios e soluções. Português europeu para quem fala espanhol.",
+  "toc_title": "Índice",
+  "footer": "Português de A a Z · SAIMAP",
+  "pdf": "Portugues-de-A-a-Z_SAIMAP.pdf",
+  "files": ["00-intro.md", "01-a1.md", "02-a2.md", "03-b1.md", "04-b2.md", "05-c1.md", "06-c2.md", "07-apendices.md"],
+  "unit_files": ["01-a1.md", "02-a2.md", "03-b1.md", "04-b2.md", "05-c1.md", "06-c2.md"],
+  "boxes": {"dialogue": ["Diálogo"], "text": ["Texto"], "sound": ["Sons e ortografia"], "warn": ["Atenção!"], "answers": ["Soluções"]}
+}

@@ -1,0 +1,14 @@
+{
+  "lang": "en",
+  "theme": "en",
+  "title": "English from A to Z",
+  "cover_title": "English<br>from A to Z",
+  "subtitle": "A complete English course · A1–C2",
+  "blurb": "50 units with dialogues, words, grammar, exercises and answers. British English for Spanish speakers.",
+  "toc_title": "Contents",
+  "footer": "English from A to Z · SAIMAP",
+  "pdf": "English-from-A-to-Z_SAIMAP.pdf",
+  "files": ["00-intro.md", "01-a1.md", "02-a2.md", "03-b1.md", "04-b2.md", "05-c1.md", "06-c2.md", "07-appendices.md"],
+  "unit_files": ["01-a1.md", "02-a2.md", "03-b1.md", "04-b2.md", "05-c1.md", "06-c2.md"],
+  "boxes": {"dialogue": ["Dialogue"], "text": ["Text"], "sound": ["Sounds & Spelling"], "warn": ["Watch out!"], "answers": ["Answers"]}
+}

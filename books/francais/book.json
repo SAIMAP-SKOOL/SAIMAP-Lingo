@@ -1,0 +1,47 @@
+{
+  "lang": "fr",
+  "theme": "fr",
+  "title": "Le français de A à Z",
+  "cover_title": "Le français<br>de A à Z",
+  "subtitle": "Cours complet de langue française · A1–C2",
+  "blurb": "50 unités avec dialogues, vocabulaire, grammaire, exercices et corrigés. Le français de France pour hispanophones.",
+  "toc_title": "Sommaire",
+  "footer": "Le français de A à Z · SAIMAP",
+  "pdf": "Le-francais-de-A-a-Z_SAIMAP.pdf",
+  "files": [
+    "00-intro.md",
+    "01-a1.md",
+    "02-a2.md",
+    "03-b1.md",
+    "04-b2.md",
+    "05-c1.md",
+    "06-c2.md",
+    "07-annexes.md"
+  ],
+  "unit_files": [
+    "01-a1.md",
+    "02-a2.md",
+    "03-b1.md",
+    "04-b2.md",
+    "05-c1.md",
+    "06-c2.md"
+  ],
+  "boxes": {
+    "dialogue": [
+      "Dialogue"
+    ],
+    "text": [
+      "Texte"
+    ],
+    "sound": [
+      "Sons et orthographe"
+    ],
+    "warn": [
+      "Attention !",
+      "Attention !"
+    ],
+    "answers": [
+      "Corrigés"
+    ]
+  }
+}

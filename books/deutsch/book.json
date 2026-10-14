@@ -1,0 +1,47 @@
+{
+  "lang": "de",
+  "theme": "de",
+  "title": "Deutsch von A bis Z",
+  "cover_title": "Deutsch<br>von A bis Z",
+  "subtitle": "Kompletter Deutschkurs · A1–C2",
+  "blurb": "50 Einheiten mit Dialogen, Wortschatz, Grammatik, Übungen und Lösungen. Standarddeutsch für Spanischsprachige.",
+  "toc_title": "Inhalt",
+  "footer": "Deutsch von A bis Z · SAIMAP",
+  "pdf": "Deutsch-von-A-bis-Z_SAIMAP.pdf",
+  "files": [
+    "00-intro.md",
+    "01-a1.md",
+    "02-a2.md",
+    "03-b1.md",
+    "04-b2.md",
+    "05-c1.md",
+    "06-c2.md",
+    "07-anhang.md"
+  ],
+  "unit_files": [
+    "01-a1.md",
+    "02-a2.md",
+    "03-b1.md",
+    "04-b2.md",
+    "05-c1.md",
+    "06-c2.md"
+  ],
+  "boxes": {
+    "dialogue": [
+      "Dialog"
+    ],
+    "text": [
+      "Text"
+    ],
+    "sound": [
+      "Laute und Schreibung",
+      "Stil und Register"
+    ],
+    "warn": [
+      "Achtung!"
+    ],
+    "answers": [
+      "Lösungen"
+    ]
+  }
+}
