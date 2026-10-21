@@ -263,5 +263,49 @@ window.LINGO_COURSES = [
   "files": [
    "course.js"
   ]
+ },
+ {
+  "id": "ca",
+  "name": "Catalán",
+  "variety": "Catalán central",
+  "store": "ca.",
+  "cloud": "progress-ca",
+  "book": "El català de la A a la Z",
+  "units": 50,
+  "levels": [
+   {
+    "id": "A1",
+    "from": 1,
+    "to": 8
+   },
+   {
+    "id": "A2",
+    "from": 9,
+    "to": 17
+   },
+   {
+    "id": "B1",
+    "from": 18,
+    "to": 28
+   },
+   {
+    "id": "B2",
+    "from": 29,
+    "to": 38
+   },
+   {
+    "id": "C1",
+    "from": 39,
+    "to": 45
+   },
+   {
+    "id": "C2",
+    "from": 46,
+    "to": 50
+   }
+  ],
+  "files": [
+   "course.js"
+  ]
  }
 ];

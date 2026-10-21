@@ -1,6 +1,6 @@
 # SAIMAP Lingo · plataforma con todos los idiomas
 
-Italiano, inglés, portugués, francés, alemán y griego en una sola web. Al entrar se elige idioma; la bandera de arriba permite cambiarlo.
+Italiano, inglés, portugués, francés, alemán, griego y catalán en una sola web. Al entrar se elige idioma; la bandera de arriba permite cambiarlo.
 La racha y los XP son comunes a todos los idiomas; cada curso guarda sus unidades, estrellas y puntos flojos.
 
 ## Estructura

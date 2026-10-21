@@ -35,14 +35,14 @@
     if (/[=]/.test(String(x)) && /^(der|die|das) /.test(x)) { const n = String(x).split("=")[0].split(" ")[1]; if (n) CAPS.add(n.replace(/,$/, "")); }
   }
   function tokens(text) {
-    const ws = text.replace(/[.,!?;:—–„“”«»·\u0387\u037E]/g, " ").split(/\s+/).filter(Boolean);
+    const ws = text.replace(/l[.•]l/g, "l·l").replace(/(?<![a-zà-ü])·|·(?![a-zà-ü])/gi, " ").replace(/[.,!?;:—–„“”«»\u0387\u037E]/g, " ").split(/\s+/).filter(Boolean);
     if (C.ui && C.ui.keepCase) return ws.map((w, i) => i > 0 || PROPER.has(w) || (CAPS.has(w) && !LOWER.has(w.toLowerCase())) ? w : w.toLowerCase());
     return ws.map(w => PROPER.has(w) ? w : w.toLowerCase());
   }
   // Griego: «;» es la interrogación, la σ final se acepta en lugar de ς y se unifica la composición (NFC).
-  const norm = s => s.normalize("NFC").toLowerCase().replace(/ß/g, "ss").replace(/[’`´]/g, "'").replace(/[.!?¿¡„“”«»;·\u0387\u037E]/g, "").replace(/\s+/g, " ").trim().replace(/σ(?=[\s',]|$)/g, "ς");
+  const norm = s => s.normalize("NFC").toLowerCase().replace(/ß/g, "ss").replace(/[’`´]/g, "'").replace(/l[.•]l/g, "l·l").replace(/(?<![a-zà-üα-ω])·|·(?![a-zà-üα-ω])/g, "").replace(/[.!?¿¡„“”«»;\u0387\u037E]/g, "").replace(/\s+/g, " ").trim().replace(/σ(?=[\s',]|$)/g, "ς");
   const DE = C.ui && C.ui.keepCase;
-  const bare = s => { const b = norm(s).normalize("NFD").replace(/[̀-ͯ]/g, ""); return DE ? b.replace(/([aou])e/g, "$1") : b; };
+  const bare = s => { const b = norm(s).replace(/·/g, "").normalize("NFD").replace(/[̀-ͯ]/g, ""); return DE ? b.replace(/([aou])e/g, "$1") : b; };
   const typable = it => !/[\/,(?=→]/.test(it.it) && it.it.split(" ").length <= 3;
   // Se puede leer en voz alta: sin barras, paréntesis ni cifras, y no demasiado larga.
   const speakable = it => !/[\/(=→…_\d]/.test(it.it) && it.it.split(/\s+/).length <= 10;

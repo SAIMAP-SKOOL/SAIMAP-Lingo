@@ -10,7 +10,7 @@ service cloud.firestore {
       match /courses/{course} {
         allow read, delete: if request.auth != null && request.auth.uid == uid;
         allow create, update: if request.auth != null && request.auth.uid == uid
-                              && course in ["it", "en", "pt", "fr", "de", "el"];
+                              && course.matches("^[a-z]{2,3}$");
       }
     }
   }
