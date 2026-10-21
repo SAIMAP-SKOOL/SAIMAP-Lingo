@@ -1,0 +1,20 @@
+{
+  "lang": "ca",
+  "theme": "ca",
+  "title": "El català de la A a la Z",
+  "cover_title": "El català<br>de la A a la Z",
+  "subtitle": "Curs complet de català · A1–C2",
+  "blurb": "50 unitats amb diàlegs, vocabulari, gramàtica, exercicis i solucions. Català central estàndard per a hispanoparlants.",
+  "toc_title": "Índex",
+  "footer": "El català de la A a la Z · SAIMAP",
+  "pdf": "El-catala-de-la-A-a-la-Z_SAIMAP.pdf",
+  "files": ["00-introduccio.md", "01-a1.md", "02-a2.md", "03-b1.md", "04-b2.md", "05-c1.md", "06-c2.md", "07-apendix.md"],
+  "unit_files": ["01-a1.md", "02-a2.md", "03-b1.md", "04-b2.md", "05-c1.md", "06-c2.md"],
+  "boxes": {
+    "dialogue": ["Diàleg"],
+    "text": ["Text"],
+    "sound": ["Pronúncia i ortografia", "Estil i registre"],
+    "warn": ["Atenció!"],
+    "answers": ["Solucions"]
+  }
+}
