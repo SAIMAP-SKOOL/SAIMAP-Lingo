@@ -19,6 +19,7 @@
     if (id === "de") return box('<rect width="30" height="7" fill="#1A1A1A"/><rect y="6.6" width="30" height="7" fill="#DD0000"/><rect y="13.3" width="30" height="6.7" fill="#FFCE00"/>');
     if (id === "pt") return box('<rect width="12" height="20" fill="#046A38"/><rect x="12" width="18" height="20" fill="#DA291C"/><circle cx="12" cy="10" r="4.6" fill="#FFE000"/><circle cx="12" cy="10" r="3" fill="#DA291C"/><rect x="10.6" y="8.2" width="2.8" height="3.6" rx=".6" fill="#fff"/>');
     if (id === "el") return box(Array.from({ length: 9 }, (_, i) => '<rect y="' + (i * 20 / 9).toFixed(2) + '" width="30" height="' + (20 / 9 + .05).toFixed(2) + '" fill="' + (i % 2 ? "#fff" : "#0D5EAF") + '"/>').join("") + '<rect width="11.1" height="11.1" fill="#0D5EAF"/><rect x="4.44" width="2.22" height="11.1" fill="#fff"/><rect y="4.44" width="11.1" height="2.22" fill="#fff"/>');
+    if (id === "ca") return box(Array.from({ length: 9 }, (_, i) => '<rect y="' + (i * 20 / 9).toFixed(2) + '" width="30" height="' + (20 / 9 + .05).toFixed(2) + '" fill="' + (i % 2 ? "#DA121A" : "#FCDD09") + '"/>').join(""));
     if (id === "en") return box('<rect width="30" height="20" fill="#012169"/><path d="M0 0L30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0L30 20M30 0L0 20" stroke="#C8102E" stroke-width="1.6"/><path d="M15 0V20M0 10H30" stroke="#fff" stroke-width="6"/><path d="M15 0V20M0 10H30" stroke="#C8102E" stroke-width="3.4"/>');
     return box('<rect width="30" height="20" fill="#9AA6B8"/>');
   }

@@ -11,10 +11,10 @@ code = open(R + '/build.py', encoding='utf8').read()
 ns = {}
 exec(code[:code.index("COURSES['it-scn']")].replace('def build(K):', 'def _unused(K):'), {'__file__': R + '/build.py', '__name__': 'x'}, ns)
 COURSES = ns['COURSES']
-VERSION = 'saimap-lingo-plataforma-v4'
-ORDER = ['it', 'en', 'pt', 'fr', 'de', 'el']
+VERSION = 'saimap-lingo-plataforma-v5'
+ORDER = ['it', 'en', 'pt', 'fr', 'de', 'el', 'ca']
 NAMES = {'it': ('Italiano', 'Italiano de Italia'), 'en': ('Inglés', 'Inglés británico'), 'pt': ('Portugués', 'Portugués europeo'),
-         'fr': ('Francés', 'Francés de Francia'), 'de': ('Alemán', 'Alemán estándar'), 'el': ('Griego', 'Griego moderno')}
+         'fr': ('Francés', 'Francés de Francia'), 'de': ('Alemán', 'Alemán estándar'), 'el': ('Griego', 'Griego moderno'), 'ca': ('Catalán', 'Catalán central')}
 FILES = ['pics.js', 'scenes.js', 'data.js', 'data-a2.js', 'data-b1.js', 'data-b2.js', 'data-c1.js', 'data-c2.js']
 
 
@@ -31,7 +31,7 @@ def course_meta(cid):
 META = [course_meta(c) for c in ORDER]
 COURSES_JS = '// Cursos de la plataforma (generado por build_platform.py)\nwindow.LINGO_COURSES = ' + json.dumps(META, ensure_ascii=False, indent=1) + ';\n'
 page = src('app.html').replace('<title>SAIMAP Lingo</title>', '<title>SAIMAP Lingo</title>')
-DESC = 'SAIMAP Lingo: aprende italiano, inglés, portugués, francés, alemán y griego desde cero con lecciones cortas y repaso continuo.'
+DESC = 'SAIMAP Lingo: aprende italiano, inglés, portugués, francés, alemán, griego y catalán desde cero con lecciones cortas y repaso continuo.'
 
 # ------------------------------------------------------------------ web / PWA
 W = R + '/platform'
@@ -123,7 +123,7 @@ service cloud.firestore {
       match /courses/{course} {
         allow read, delete: if request.auth != null && request.auth.uid == uid;
         allow create, update: if request.auth != null && request.auth.uid == uid
-                              && course in ["it", "en", "pt", "fr", "de", "el"];
+                              && course.matches("^[a-z]{2,3}$");
       }
     }
   }
@@ -138,7 +138,7 @@ open(W + '/.well-known/assetlinks.json', 'w').write('''[{
 ''')
 open(W + '/README.md', 'w', encoding='utf8').write('''# SAIMAP Lingo · plataforma con todos los idiomas
 
-Italiano, inglés, portugués, francés, alemán y griego en una sola web. Al entrar se elige idioma; la bandera de arriba permite cambiarlo.
+Italiano, inglés, portugués, francés, alemán, griego y catalán en una sola web. Al entrar se elige idioma; la bandera de arriba permite cambiarlo.
 La racha y los XP son comunes a todos los idiomas; cada curso guarda sus unidades, estrellas y puntos flojos.
 
 ## Estructura

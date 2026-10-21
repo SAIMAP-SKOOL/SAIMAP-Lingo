@@ -3,7 +3,7 @@ R=os.path.dirname(os.path.abspath(__file__)); src=lambda n: open(os.path.join(R,
 FILES=('pics.js','scenes.js','data.js','data-a2.js','data-b1.js','data-b2.js','data-c1.js','data-c2.js','engine.js','app.js')
 SHARED=('engine.js','app.js')   # el motor y la interfaz son comunes; el contenido cambia con el curso
 COURSES={
- 'it': dict(id='it', dir='', img='/home/claude/books/italiano/out', artifact='artifact', html='saimap-lingo.html', web='web',
+ 'it': dict(id='it', dir='', img='/tmp/claude-0/-home-claude/cfd6ae6c-c1ad-59b2-85f6-b4a9eb174ac8/scratchpad/book/out', artifact='artifact', html='saimap-lingo.html', web='web',
             title='SAIMAP Lingo', app='SAIMAP Lingo', desc='SAIMAP Lingo: aprende italiano desde cero con lecciones cortas y repaso continuo.', sw='saimap-lingo-c2-v12', pkg='com.saimap.lingo', adj='italiana'),
  'en': dict(id='en', dir='en/', img='/home/claude/books/english/img', artifact='artifact-en', html='saimap-lingo-ingles.html', web='web-en',
             title='SAIMAP Lingo Inglés', app='SAIMAP Lingo Inglés', desc='SAIMAP Lingo: aprende inglés británico desde cero con lecciones cortas y repaso continuo.', sw='saimap-lingo-en-v4', pkg='com.saimap.lingo.en', adj='inglesa'),
@@ -12,6 +12,7 @@ COURSES={
   'fr': dict(id='fr', dir='fr/', img='/home/claude/books/francais/img', artifact='artifact-fr', html='saimap-lingo-frances.html', web='web-fr', title='SAIMAP Lingo Francés', app='SAIMAP Lingo Francés', desc='SAIMAP Lingo: aprende francés de Francia desde cero con lecciones cortas y repaso continuo.', sw='saimap-lingo-fr-v4', pkg='com.saimap.lingo.fr', adj='francesa'),
   'de': dict(id='de', dir='de/', img='/home/claude/books/deutsch/img', artifact='artifact-de', html='saimap-lingo-aleman.html', web='web-de', title='SAIMAP Lingo Alemán', app='SAIMAP Lingo Alemán', desc='SAIMAP Lingo: aprende alemán estándar desde cero con lecciones cortas y repaso continuo.', sw='saimap-lingo-de-v4', pkg='com.saimap.lingo.de', adj='alemana'),
   'el': dict(id='el', dir='el/', img='/home/claude/books/ellinika/img', artifact='artifact-el', html='saimap-lingo-griego.html', web='web-el', title='SAIMAP Lingo Griego', app='SAIMAP Lingo Griego', desc='SAIMAP Lingo: aprende griego moderno desde cero con lecciones cortas y repaso continuo.', sw='saimap-lingo-el-v1', pkg='com.saimap.lingo.el', adj='griega'),
+  'ca': dict(id='ca', dir='ca/', img='/home/claude/books/catala/img', artifact='artifact-ca', html='saimap-lingo-catalan.html', web='web-ca', title='SAIMAP Lingo Catalán', app='SAIMAP Lingo Catalán', desc='SAIMAP Lingo: aprende catalán desde cero con lecciones cortas y repaso continuo.', sw='saimap-lingo-ca-v1', pkg='com.saimap.lingo.ca', adj='catalana'),
 }
 def build(K):
     csrc=lambda n: src(n if n in SHARED else K['dir']+n) if n in SHARED or os.path.exists(os.path.join(R,'src',K['dir']+n)) else 'window.SCENES = {};'

@@ -836,3 +836,145 @@ def t_whitetower():
     o += bubble(90, 470, 'Λευκός Πύργος!', '#fff', side=0, size=11)
     o += cornetto(60, 660, 1.4) + bubble(110, 650, 'Μια μπουγάτσα;', '#FFF3C4', side=0, size=10) + tree(30, 700, .7)
     return done(bg, o, 'road', '#E8E3D8')
+
+
+# ================================================================ CATALÁN
+_facade_prev_ca = facade
+
+
+def facade(x, y, w, h, col, shut='#3E8A52', rows=2, cols=2, roof='#C0583F', door=False):
+    if LOC.get('arch') != 'eixample':
+        return _facade_prev_ca(x, y, w, h, col, shut, rows, cols, roof, door)
+    # Eixample: piedra clara u ocre, balcones de hierro forjado, persianas verdes
+    k = int(x * 7 + w) % 3
+    col = ['#EBDDC2', '#E3C79A', '#F0E2C8'][k]
+    ww, wh = 13, 19
+    out = f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{col}"/><rect x="{x - 3}" y="{y - 7}" width="{w + 6}" height="8" fill="#CDB892"/>'
+    out += f'<path d="M{x} {y - 7} q{w / 4} -10 {w / 2} 0 q{w / 4} -10 {w / 2} 0" fill="#D9C49C"/>'
+    for r in range(rows):
+        for c in range(cols):
+            wx = x + (c + .5) * w / cols - ww / 2; wy = y + 10 + r * (wh + 14)
+            out += f'<rect x="{wx}" y="{wy}" width="{ww}" height="{wh}" rx="1" fill="{["#3E8A52", "#4C7A5B", "#5E8C6A"][k]}"/><path d="M{wx + ww / 2} {wy} V{wy + wh}" stroke="{col}" stroke-width="1.2"/>'
+            out += f'<path d="M{wx - 4} {wy + wh - 6} H{wx + ww + 4} M{wx - 4} {wy + wh + 1} H{wx + ww + 4}" stroke="#26323A" stroke-width="1.4"/>' + ''.join(f'<path d="M{wx - 3 + i * 4} {wy + wh - 6} v7" stroke="#26323A" stroke-width=".8"/>' for i in range(6))
+    if door:
+        out += f'<path d="M{x + w / 2 - 9} {y + h} v-22 a9 9 0 0 1 18 0 v22 z" fill="#6B4429"/>'
+    return out
+
+
+def sagrada(x, y, s=1):
+    # Sagrada Família: cuatro campanarios en forma de huso y la torre central con la cruz
+    o = '<rect x="-80" y="-60" width="160" height="60" fill="#D8C29C"/>'
+    o += ''.join(f'<path d="M{-50 + i * 10} -60 v-30 a5 5 0 0 1 10 0 v30" fill="#C9AF84"/>' for i in range(10))
+    for i, (dx, hh) in enumerate(((-66, 150), (-38, 172), (38, 172), (66, 150))):
+        o += f'<path d="M{dx - 11} -60 Q{dx - 13} {-60 - hh * .6} {dx} {-60 - hh} Q{dx + 13} {-60 - hh * .6} {dx + 11} -60 Z" fill="#CDB48A"/>'
+        o += ''.join(f'<circle cx="{dx}" cy="{-74 - j * 16}" r="1.8" fill="#8A6B4A"/>' for j in range(int(hh / 18)))
+        o += f'<circle cx="{dx}" cy="{-62 - hh}" r="4" fill="{["#E2574C", "#FFC94A", "#5BAA6A", "#FFC94A"][i]}"/>'
+    o += '<path d="M-14 -60 Q-16 -170 0 -230 Q16 -170 14 -60 Z" fill="#D9C7A2"/><path d="M0 -230 V-252 M-8 -244 H8" stroke="#E9E4DA" stroke-width="4"/>'
+    o += '<path d="M-20 0 v-34 a20 20 0 0 1 40 0 v34 z" fill="#8A6B4A"/>'
+    return g(o, x, y, s)
+
+
+_dome_prev_ca = dome
+
+
+def dome(x, y, s=1):
+    if LOC.get('landmark') == 'sagrada':
+        return sagrada(x, y, s * .8)
+    return _dome_prev_ca(x, y, s)
+
+
+def ensaimada(x, y, s=1):
+    spiral = 'M0 -9 m-2 0 a2 2 0 1 1 4 0 a5 4 0 1 1 -9 0 a8 6 0 1 1 15 1 a12 8 0 1 1 -22 0'
+    return g(f'<ellipse cx="0" cy="-9" rx="18" ry="9" fill="#E9B46A"/><path d="{spiral}" stroke="#C98536" stroke-width="2.2" fill="none"/>'
+             '<ellipse cx="0" cy="-11" rx="15" ry="6" fill="#fff" opacity=".55"/>', x, y, s)
+
+
+_cornetto_prev_ca = cornetto
+
+
+def cornetto(x, y, s=1):
+    if LOC.get('pastry') == 'ensaimada':
+        return ensaimada(x, y, s)
+    return _cornetto_prev_ca(x, y, s)
+
+
+_flag_prev_ca = country_flag
+
+
+def country_flag(x, y, w=40, h=26):
+    if LOC.get('flag') != 'ca':
+        return _flag_prev_ca(x, y, w, h)
+    # Senyera: nueve franjas, cinco amarillas y cuatro rojas
+    return ''.join(f'<rect x="{x}" y="{y + i * h / 9:.2f}" width="{w}" height="{h / 9 + .2:.2f}" fill="{"#F2C230" if i % 2 == 0 else "#D9352B"}"/>' for i in range(9))
+
+
+def rose(x, y, s=1, rot=0):
+    return (f'<g transform="translate({x} {y}) rotate({rot}) scale({s})"><path d="M0 0 V-30" stroke="#3E8A52" stroke-width="2.4"/><path d="M0 -14 q-9 -2 -10 -9 q8 0 10 6" fill="#5BAA6A"/>'
+            '<path d="M-7 -32 q0 -10 7 -11 q7 1 7 11 q-7 5 -14 0 z" fill="#D9352B"/><path d="M-3 -38 q3 -4 6 0" stroke="#A8231C" stroke-width="1.4" fill="none"/></g>')
+
+
+_t_idioms_prev_ca = t_idioms
+
+
+def t_idioms():
+    if LOC.get('idiom') != 'bots':
+        return _t_idioms_prev_ca()
+    # «Ploure a bots i barrals»: núvol de pluja i dos barrils
+    o = env_park('#E2F0FA', '#F4F7EA', '#C9E2B0', '#BCD9A2', 280)
+    bg, o = o, ''
+    barrel = lambda bx, by: (f'<g transform="translate({bx} {by})"><path d="M-14 0 Q-18 -18 -14 -36 H14 Q18 -18 14 0 Z" fill="#A8672E"/>'
+                             '<path d="M-15 -8 H15 M-16 -28 H16" stroke="#5E3E28" stroke-width="3"/><path d="M-6 -36 V0 M6 -36 V0" stroke="#7A4419" stroke-width="1" opacity=".6"/></g>')
+    o += raincloud(90, 120, 1.3) + barrel(62, 236) + barrel(118, 236)
+    o += person(50, 400, '#3F6FA8', 1, pose='point', glasses=True) + person(120, 400, '#E2574C', 2, '#6B3E1E', pose='hold', face=-1, hs='long')
+    o += bubble(90, 300, 'In bocca al lupo!', '#fff', side=0, size=10)
+    o += bubble(90, 470, 'Crepi!', '#FFF3C4', side=0, size=11) + open_book(60, 640, 1) + magnifier(130, 650, .9) + tree(30, 700, .7)
+    return done(bg, o, 'trail', '#E4F0DA')
+
+
+def t_santjordi():
+    o = env_street('#CDEBFA', '#FBEFD9', '#E6E1D6', y0=260)
+    bg, o = o, ''
+    o += stall(100, 420, 1.1, '#D9352B')
+    o += books(70, 372, .8) + books(110, 372, .8) + ''.join(rose(x, 378, .7, r) for x, r in ((136, -10), (146, 8), (156, -4)))
+    o += country_flag(40, 270) + country_flag(140, 270)
+    o += bubble(90, 300, 'Bon Sant Jordi!', '#fff', side=0, size=12)
+    o += person(50, 560, '#3F6FA8', 1, pose='hold') + rose(66, 520, .8, 20) + person(120, 560, '#C77DBA', 2, '#6B3E1E', pose='wave', hs='long', skirt=True, face=-1, begin=.4)
+    o += bubble(90, 470, 'Una rosa per a tu!', '#FFF3C4', side=0, size=11)
+    o += open_book(60, 660, 1) + rose(130, 676, 1, -15) + bubble(110, 610, 'I un llibre per a mi!', '#E8F4EC', side=0, size=10)
+    return done(bg, o, 'road', '#F3E6DA')
+
+
+def t_castells():
+    o = env_street('#CDEBFA', '#F7EEDC', '#E3D9C6', y0=300)
+    o += dome(330, 300, .9)
+    bg, o = o, ''
+    shirt = '#C0392B'
+    # la pinya i els pisos del castell, de baix a dalt
+    o += ''.join(person(x, 620, shirt, (i % 3), pose='stand', s=.85, face=1 if x < 100 else -1) for i, x in enumerate((20, 46, 72, 128, 154, 180)))
+    for lvl, (n, yy, sc) in enumerate(((3, 570, .9), (3, 515, .85), (2, 462, .8), (2, 412, .75), (1, 366, .7))):
+        xs = [100] if n == 1 else ([82, 118] if n == 2 else [70, 100, 130])
+        o += ''.join(person(x, yy, shirt, (lvl + j) % 3, pose='stand', s=sc) for j, x in enumerate(xs))
+        o += f'<path d="M{xs[0] - 8} {yy - 30 * sc} H{xs[-1] + 8}" stroke="#26323A" stroke-width="5" stroke-linecap="round" opacity=".85"/>'
+    o += person(100, 326, '#FFC94A', 1, pose='wave', s=.55, begin=.2) + '<g transform="translate(100 286)"><rect x="-6" y="-6" width="12" height="10" rx="5" fill="#F4F1EA"/></g>'
+    o += bubble(90, 250, "L'enxaneta fa l'aleta!", '#fff', side=0, size=10)
+    o += bubble(70, 680, 'Força, equilibri, valor i seny!', '#FFF3C4', side=0, size=9)
+    return done(bg, o, 'stone', '#F1E6D2')
+
+
+def t_gaudi():
+    o = sky('#BFE4F7', '#FBEFD9', 300) + sagrada(300, 310, .9) + '<rect y="300" width="400" height="400" fill="#E8D9B8"/>'
+    bg, o = o, ''
+    tiles = ['#3F6FA8', '#E2574C', '#FFC94A', '#5BAA6A', '#F4F1EA', '#C77DBA']
+    # banc ondulat de trencadís
+    o += '<path d="M8 440 q22 -16 44 0 t44 0 t44 0 t44 0 V478 H8 Z" fill="#F4F1EA" stroke="#C9B48E" stroke-width="2"/>'
+    o += ''.join(f'<path d="M{12 + (i % 22) * 8} {446 + (i // 22) * 9 - 7 * math.sin((i % 22) * .71):.1f} l6 -2 l2 6 l-6 2 z" fill="{tiles[(i * 5) % 6]}"/>' for i in range(66) if 446 + (i // 22) * 9 < 476)
+    o += '<rect x="8" y="478" width="176" height="10" fill="#D9C49C"/>'
+    # el drac (salamandra) de les escales
+    o += '<g transform="translate(90 600)"><path d="M-60 0 Q-40 -30 0 -26 Q40 -22 56 -6 Q40 4 0 4 Q-30 6 -60 0 Z" fill="#5BAA6A"/>'
+    o += ''.join(f'<circle cx="{-46 + i * 10}" cy="{-12 + (i % 2) * 5}" r="4" fill="{tiles[i % 6]}"/>' for i in range(10))
+    o += '<circle cx="46" cy="-12" r="3" fill="#26323A"/><path d="M-60 0 q-16 -4 -22 -16" stroke="#5BAA6A" stroke-width="8" stroke-linecap="round" fill="none"/>'
+    o += '<path d="M-30 4 v14 M10 4 v14 M30 0 v16" stroke="#3E8A52" stroke-width="6" stroke-linecap="round"/></g>'
+    o += bubble(90, 380, 'Quin trencadís!', '#fff', side=0, size=12)
+    o += person(60, 540, '#E2574C', 2, '#3A2A1E', pose='point', hs='long', skirt=True) + person(130, 540, '#3F6FA8', 1, pose='wave', face=-1, glasses=True)
+    o += bubble(100, 670, 'El drac del Park Güell', '#FFF3C4', side=0, size=10)
+    return done(bg, o, 'stone', '#F2E6CF')
