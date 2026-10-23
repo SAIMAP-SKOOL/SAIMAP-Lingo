@@ -176,6 +176,8 @@
       clearTimeout(pushTimer); Cloud.write = null;
       const base = Cloud.fs.collection("users").doc(u.uid), ids = PF ? PF.courses.map(c => c.id) : [C.id || "it"];
       await Promise.all(ids.filter(id => id !== "it").map(id => base.collection("courses").doc(id).delete()));
+      // La cuenta SAIMAP es común: también se borra el progreso de SAIMAP Psicología.
+      await base.collection("psicologia").get().then(s => Promise.all(s.docs.map(d => d.ref.delete())), () => { });
       await base.delete();
       await u.delete();
       clearLocal(); hide(); formErr = "Tu cuenta y tu progreso se han borrado."; view = "me"; render();
@@ -187,7 +189,7 @@
   function askDelete() {
     const u = Cloud.auth && Cloud.auth.currentUser; if (!u) return;
     const needPass = u.providerData.some(p => p.providerId === "password") && !u.providerData.some(p => p.providerId === "google.com");
-    show('<h2>¿Borrar tu cuenta?</h2><p class="sub">Se borran tu cuenta y el progreso de todos los idiomas, en la nube y en este dispositivo. No se puede deshacer.</p>' +
+    show('<h2>¿Borrar tu cuenta?</h2><p class="sub">Se borran tu cuenta SAIMAP y el progreso de todos los idiomas (y el de SAIMAP Psicología, si la usas con esta cuenta), en la nube y en este dispositivo. No se puede deshacer.</p>' +
       (needPass ? '<input id="delpass" class="field" type="password" autocomplete="current-password" placeholder="Tu contraseña, para confirmar">' : '<p class="sub">Te pediremos confirmar con tu cuenta de Google.</p>') +
       '<p class="err" id="delmsg" aria-live="polite"></p><button class="btn warn" id="delgo" data-act="delacct">Borrar mi cuenta</button><button class="btn plain" data-act="hide">Cancelar</button>');
   }

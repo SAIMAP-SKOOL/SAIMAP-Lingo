@@ -125,6 +125,12 @@ service cloud.firestore {
         allow create, update: if request.auth != null && request.auth.uid == uid
                               && course.matches("^[a-z]{2,3}$");
       }
+      //   users/<uid>/psicologia/<doc> → SAIMAP Psicología (_global y una por asignatura)
+      match /psicologia/{doc} {
+        allow read, delete: if request.auth != null && request.auth.uid == uid;
+        allow create, update: if request.auth != null && request.auth.uid == uid
+                              && doc.matches("^[a-z0-9_-]{1,40}$");
+      }
     }
   }
 }
